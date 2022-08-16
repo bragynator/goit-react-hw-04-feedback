@@ -8,31 +8,42 @@ import {
 } from '../utils/feedback-count';
 
 export function App() {
-  const [feedback, setFeedback] = useState({
-    good: 0,
-    neutral: 0,
-    bad: 0,
-  });
+  const [goodFeedback, setGoodFeedback] = useState(0);
+  const [neutralFeedback, setNeutralFeedback] = useState(0);
+  const [badFeedback, setBadFeedback] = useState(0);
 
   const handleFeedbackClick = e => {
-    const { nodeName, textContent } = e.target;
+    const { textContent } = e.target;
 
-    if (nodeName !== 'BUTTON') {
-      return;
+    switch (textContent) {
+      case 'Good':
+        setGoodFeedback(prevState => (prevState += 1));
+        break;
+
+      case 'Neutral':
+        setNeutralFeedback(prevState => (prevState += 1));
+        break;
+
+      case 'Bad':
+        setBadFeedback(prevState => (prevState += 1));
+        break;
+
+      default:
+        return;
     }
-
-    setFeedback(prevState => {
-      return {
-        ...prevState,
-        [textContent.toLowerCase()]: prevState[textContent.toLowerCase()] + 1,
-      };
-    });
   };
 
-  const { good, neutral, bad } = feedback;
+  const feedback = {
+    good: goodFeedback,
+    neutral: neutralFeedback,
+    bad: badFeedback,
+  };
   const options = Object.keys(feedback);
   const total = countTotalFeedback(feedback);
-  const positivePercentage = countPositiveFeedbackPercentage(good, total);
+  const positivePercentage = countPositiveFeedbackPercentage(
+    goodFeedback,
+    total
+  );
 
   return (
     <div className="Statistics">
@@ -44,9 +55,9 @@ export function App() {
       </Section>
       <Section title="Statistics">
         <Statistics
-          good={good}
-          neutral={neutral}
-          bad={bad}
+          good={goodFeedback}
+          neutral={neutralFeedback}
+          bad={badFeedback}
           total={total}
           positivePercentage={positivePercentage}
         />
